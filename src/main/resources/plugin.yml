@@ -8,15 +8,34 @@ commands:
   nickname:
     description: set your nickname
     permission: NUtils.commands.nickname
-    permission-message: "ERROR: CANT RUN nickname command (You dont have perms)"
+    permission-message: "ERROR: CANT RUN nickname command (You don't have perms)"
     usage: "/nickname <Name : String>"
   nfly:
     description: set your nickname
     permission: NUtils.commands.fly
-    permission-message: "ERROR: CANT RUN fly command (You dont have perms)"
+    permission-message: "ERROR: CANT RUN fly command (You don't have perms)"
     usage: /nfly
   gamemode:
     description: Change Gamemode
     permission: NUtils.commands.gamemode
     permission-message: "§4I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error."
     usage: "/gamemode <Gamemode> [<target>]"
+  NUtils:
+    description: help and credits.
+    permission: 0
+    usage: /<command>
+  system:
+    description: get the Server system.
+    permission: 3
+    permission-message: "§4I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error."
+    usage: "/<command>"
+  trashbox:
+    description: TrashBox
+    permission: 0
+    permission-message: wait what?
+    usage: "/<command>"
+  openinv:
+    description: Open the Inventorys
+    permission: 4
+    permission-message: "§4I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error."
+    usage: "/<command> <player>"

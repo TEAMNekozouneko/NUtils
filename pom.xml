@@ -6,7 +6,7 @@
 
     <groupId>ga.nekozouneko.plugins.utils</groupId>
     <artifactId>NUtils</artifactId>
-    <version>1.0.2-PreRelease</version>
+    <version>1.0.4-PreRelease</version>
     <packaging>jar</packaging>
 
     <name>NUtils</name>
@@ -16,6 +16,7 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -65,6 +66,18 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>mavenrepo1</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>Att</id>
+            <url>https://packages.atlassian.com/mvn/maven-atlassian-external/</url>
+        </repository>
+        <repository>
+            <id>Sonatype2</id>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -78,6 +91,11 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>5.8.2</version>
         </dependency>
     </dependencies>
 </project>

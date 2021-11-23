@@ -1,35 +1,52 @@
+/* This Plugin made by Taitaitatata.
+ *
+ *
+ */
+
 package ga.nekozouneko.plugins.utils.nutils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.WorldCreator;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.spigotmc.*;
-import com.google.common.cache.AbstractCache;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.ComputerSystem;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OperatingSystem;
 
+import javax.annotation.processing.Processor;
+
+import static org.bukkit.Bukkit.getPlayer;
 
 public final class NUtils extends JavaPlugin implements Listener {
+
     // 起動 / 終了時の表示テキスト
 
     @Override
     public void onEnable() {
         getLogger().info("§n§6[§bNUtils§6]§r §l§4>§6>§r NUtils for Spigot Edition Running on " + getServer().getName());
         getLogger().info("§n§6[§bNUtils§6]§r §l§4>§6>§r §aEnabled !");
-    }
+        getServer().getPluginManager().registerEvents(this, this);
+}
 
     @Override
     public void onDisable() {
@@ -47,9 +64,11 @@ public final class NUtils extends JavaPlugin implements Listener {
             String cn = args[0].replace("&", "§");
             getServer().getPlayer(sender.getName()).setDisplayName(cn);
             getServer().getPlayer(sender.getName()).setPlayerListName(cn);
-            sender.sendMessage("§n§6[§bNUtils§6]§r §l§4>§6>§r ニックネームを [" + getServer().getPlayer(sender.getName()).getDisplayName() + "&r] に変更しました");
+            sender.sendMessage("§n§6[§bNUtils§6]§r §l§4>§6>§r ニックネームを [" + getServer().getPlayer(sender.getName()).getDisplayName() + "§r] に変更しました");
             return true;
-        } // nfly command
+        }
+        // nfly command
+
         if (command.getName().equalsIgnoreCase("nfly")) {
             if (Bukkit.getServer().getPlayer(sender.getName()).getGameMode().name().equalsIgnoreCase("CREATIVE") || getServer().getPlayer(sender.getName()).getGameMode().name().equalsIgnoreCase("SPECTATOR")) {
                 sender.sendMessage("§n§6[§bNUtils§6]§r §l§4>§6>§r §4すでに浮遊可能状態です");
@@ -63,7 +82,8 @@ public final class NUtils extends JavaPlugin implements Listener {
                 sender.sendMessage("§n§6[§bNUtils§6]§r §l§4>§6>§r 浮遊を有効化しました。");
                 return true;
             }
-        } // gamemode command
+        }
+        // gamemode command
         if (command.getName().equalsIgnoreCase("gamemode")) {
             if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("adventure") || args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("2")) {
@@ -102,6 +122,34 @@ public final class NUtils extends JavaPlugin implements Listener {
                 return true;
             }
         }
+        if (command.getName().equalsIgnoreCase("system")) {
+            SystemInfo si = new SystemInfo();
+            HardwareAbstractionLayer hal = si.getHardware();
+            CentralProcessor cpu = hal.getProcessor();
+            OperatingSystem os = si.getOperatingSystem();
+            HardwareAbstractionLayer hard = si.getHardware();
+            GlobalMemory memory = hard.getMemory();
+            String version = System.getProperty("java.version");
+            String CPU = ""+ cpu;
+            String OS = ""+ os.getFamily() + " " + os.getVersionInfo() + " " + os.getBitness() + "Bit";
+            String mem = ""+ memory.getPageSize();
+            sender.sendMessage("§n§6[§bNUtils§6]§r §l§4>§6>§r サーバーシステム:\n§6========= §r§lCPU§r §6=========§r\n" + CPU + "\n§6========= §r§lOS §6=========§r\n" + OS + "\n§6========= §r§lMemory §6=========§r\n" + mem + "MB\n§6========= §r§lJDK§r §6=========§r\n" + version);
+        }
+        if (command.getName().equalsIgnoreCase("nutils")) {
+            if (args[0].equalsIgnoreCase("help")) {
+
+            } else if (args[0].equalsIgnoreCase("credits")) {
+
+            }
+        }
+        if (command.getName().equalsIgnoreCase("trashbox")) {
+            Inventory inventory = Bukkit.getServer().createInventory(null, 54, "Trash Box / ゴミ箱");
+            getPlayer(sender.getName()).openInventory(inventory);
+        }
+        if (command.getName().equalsIgnoreCase("openinv")) {
+            Inventory inv = Bukkit.getPlayer(args[0]).getInventory();
+            getPlayer(sender.getName()).openInventory(inv);
+        }
         return true;
     }
     @Override
@@ -118,10 +166,23 @@ public final class NUtils extends JavaPlugin implements Listener {
                     return Arrays.asList("survival", "s", "spectator", "sp");
                 } else if (args[0].startsWith("sp")) {
                     return Arrays.asList("spectator", "sp");
+            } if (args[1].length() == 0) {
+                return Arrays.asList("@p", "@r", "@s", "@a", "<target>");
             }
         }
-        //JavaPlugin#onTabComplete()を呼び出す
         return super.onTabComplete(sender, command, alias, args);
     }
+
+    // コマンドログ
+
+    @EventHandler
+    public void onCommandRun(PlayerCommandPreprocessEvent e) {
+        for (Player plys : getServer().getOnlinePlayers()) {
+            if (plys.isOp()) {
+                plys.sendMessage("§n§6[§bNUtils§6]§r §l§4>§6>§r §n§8" + e.getPlayer().getName() + "がコマンド §7'" + e.getMessage() + "' §r§8を使用しました。");
+            }
+        }
+    }
+
 }
 
